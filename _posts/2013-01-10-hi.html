@@ -1,0 +1,49 @@
+---
+layout: default
+title: what's CRT
+---
+<h2>{{ page.title }}</h2>
+<p>
+  CRT是干嘛的？
+  看brokenthorn上《Operating System Development Series》系列文章时，在"Kernel Setup: MSVC++ 2005"这一章中提到了runtime library这个概念，不是很理解，于是查了些资料。
+</p>
+<p>1.In applications, what's the entry point?</p>
+<p>
+    Maybe you will say main(), but what calls main()? The runtime library. 
+    What calls and initialzes all global objects? The runtime library. 
+    What provides certain keyword supports that which tie with the system (such as new and delete)? The runtime library. 
+    What sets up the initil stack information? Again: The runtime library. 
+</p>
+<p>2.What's C Runtime Library?</p>
+<p>
+  在stackoverflow中有这个问题(http://stackoverflow.com/questions/2766233/what-is-the-c-runtime-library)，我觉得提问人中引用的Microsoft对run-time library的解释挺准确的。我将话修改为如下: "The c run-time library provides routines for programming for the operating system. These routines automate many common programming tasks that are not provided by the C and C++ languages."
+  In C Runtime library, the C standard defines a set of functions a conforming (hosted) implementation must supply. Most vendors add various other functions themselves (for compatibility, to provide capabilities the standard functions don't address, etc.)
+  
+  在Linux上，实现的C Runtime Library有GLIBC。我下载了源码进行了简单阅读：
+  在csu目录中包含有C的启动代码，ELF文件load进内存后，程序执行的入口点是start.S中的_start。(用readelf和objdump工具可以观察到)
+  _start将main、argc、argv、init等压栈后，调用LIBC_START_MAIN。
+  在LIBC_START_MAIN中完成必要的初始化的工作后，调用main函数，最后会调用exit函数，在exit中执行一些退出函数。
+    
+  除了为main函数的启动和结束时进行一定的工作，GLIBC还提供了什么支持？
+    1.特殊计算的支持，如float计算的支持
+    2.对内存的操作，如malloc函数
+    3.对字符串的操作，如strlen函数
+    4.对io的操作，如printf函数
+    5.线程操作
+    。。。
+</p>
+<p>3.Two implements of C Runtime Library</p>
+<p>
+  3.1 for linux
+    可以阅读GLIBC
+  3.2 for windows
+    可以参考codeproject上的这篇文章，介绍了如何自己写一个《Tiny C Runtime Library》 ，在里面通过直接调用WIN_API重写了一些基本函数；也可以参考brokenthorn上的那篇文章。不过这里的两个实现都未考虑stack的初始化工作：对于OSdev中的示例，栈的设置是在stage2.asm中完成的；对于TinyCRT，它仍然调用了Multi-threaded这个runtime library，所以还是得由msvcrt进行完成的。
+</p>
+<p>Reference:</p>
+<p>
+  a)http://cboard.cprogramming.com/cplusplus-programming/136855-what-runtime-library-c-cplusplus.html
+  b)http://blog.csdn.net/lsaturn/article/details/968206
+  c)http://www.codeproject.com/Articles/15156/Tiny-C-Runtime-Library
+  d)http://www.brokenthorn.com/Resources/OSDevMSVC.html
+</p>
+<p>{{ page.date | date_to_string }}</p>
