@@ -1,0 +1,48 @@
+---
+layout: default
+title: FreeBSD上scheme的初次使用
+---
+<h2>{{ page.title }}</h2>
+<p>1.安装</p>
+<p></p>
+<p>	The MIT Scheme Interpreter can be found in lang/mit-scheme.</p>
+<p>	cd /usr/ports/lang/mit-scheme</p>
+<p>	/* 采用下面的命令一步完成 make、 make install 和 make clean 这三个分开的步骤的工作。 */</p>
+<p>	make install clean</p>
+
+<p>2.运行</p>
+<p> </p>
+<p>	阅读《计算机程序的构造与解释》1.2章中的换零钱方式统计后，将如下程序</p> 
+<p>	---------------------------------------------------------------------------</p> 
+<p>	(define (take-kind-coin kind-coin)</p> 
+<p>   (cond ((= 1 kind-coin) 1)</p> 
+<p>         ((= 2 kind-coin) 5)</p> 
+<p>         ((= 3 kind-coin) 10)</p> 
+<p>         ((= 4 kind-coin) 25)</p> 
+<p>         ((= 5 kind-coin) 50)))</p> 
+<p>  (define (change count kind-coin)</p> 
+<p>   (cond ((= 0 count) 1)</p> 
+<p>         ((or (= 0 kind-coin) (< count 0)) 0)</p> 
+<p>         (else (+ (change (- count </p> 
+<p>                             (take-kind-coin kind-coin)) </p> 
+<p>                          kind-coin)</p> 
+<p>                  (change count </p> 
+<p>                          (- kind-coin 1))))))       </p> 
+<p>  (define (change-method count) (change count 5)) </p> 
+<p>	---------------------------------------------------------------------------	</p> 
+<p>	保存到change.scm文件中。</p> 
+<p>	cd到文件所在目录，在shell中执行：</p> 
+<p>	scheme -compiler</p> 
+<p>	进入scheme后，可以在解释器中直接敲入lisp程序，也可以编译运行保存在文件中的lisp源程序。</p> 
+<p>	(cf "change")     //将编译change.scm，产生change.com文件</p> 
+<p>	(load "change")   //将load change.com文件</p> 
+<p>	(change-method 100)</p> 
+<p>	注：1.只有带上“-compiler”选项，才能使用cf编译.scm（lisp文件扩展名）;</p> 
+<p>	    2.运行一个过程时，要带上括号；</p> 
+<p>	    3.上面的程序，如果我将(define (change-method count) (change count 5)) 放到第一行，无法执行change-method，只能执行最后的过程change count kind-coin，为啥啊？</p> 
+<p></p>
+<p>相关参考：</p>
+<p></p>
+<p>	1.scheme简明教程：http://www.cnblogs.com/heros/tag/Scheme/</P>
+<p>	2.http://www.simplemind.info/technolife/miscellanea/how-to-start-scheme.html</p>
+<p>{{ page.date | date_to_string }}</p>
